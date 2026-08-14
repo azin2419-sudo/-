@@ -90,10 +90,20 @@ object NotificationHelper {
             ""
         }
 
+        // Dynamic romantic notification titles
+        val sweetSalutations = listOf(
+            "دوستت دارم ${profile.name} من ❤️",
+            "چقدر خوشگل شدی امروز ${profile.name} 🌸✨",
+            "پیام عشق و دلدادگی برای ${profile.name} 💖",
+            "لبخندت قشنگ‌ترین اتفاق امروزه 👑",
+            "عاشقتم تمام دنیای من 🌷"
+        )
+        val randomSalutation = sweetSalutations[((quote.orderIndex) % sweetSalutations.size)]
+
         val title = if (isGentleModeActive) {
-            "🌸 به یادتم ${profile.name}$pmsStatusShort"
+            "🌸 به یادتم و دوستت دارم ${profile.name}$pmsStatusShort"
         } else {
-            "💕 پیام عشق برای ${profile.name}$pmsStatusShort"
+            "$randomSalutation$pmsStatusShort"
         }
 
         val bigText = buildString {

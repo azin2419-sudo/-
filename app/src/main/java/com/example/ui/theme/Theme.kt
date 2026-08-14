@@ -8,17 +8,20 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
     primary = SleekPinkGradientStart,
-    onPrimary = SleekTextPrimary,
+    onPrimary = Color.White,
     primaryContainer = SleekPinkDark,
     onPrimaryContainer = SleekPinkLight,
-    secondary = SleekIndigoText,
-    onSecondary = SleekSurface,
-    secondaryContainer = SleekIndigoSoft,
-    onSecondaryContainer = SleekIndigoText,
+    secondary = SleekBluePrimary,
+    onSecondary = Color.White,
+    secondaryContainer = DarkSurfaceVariant,
+    onSecondaryContainer = SleekBlueLight,
+    tertiary = SleekGreyMedium,
+    onTertiary = DarkBackground,
     background = DarkBackground,
     surface = DarkSurface,
     surfaceVariant = DarkSurfaceVariant,
@@ -32,14 +35,14 @@ private val LightColorScheme = lightColorScheme(
     onPrimary = SleekSurface,
     primaryContainer = SleekPinkLight,
     onPrimaryContainer = SleekPinkDark,
-    secondary = SleekIndigoText,
+    secondary = SleekBluePrimary,
     onSecondary = SleekSurface,
-    secondaryContainer = SleekIndigoSoft,
-    onSecondaryContainer = SleekIndigoText,
-    tertiary = SleekAmberText,
+    secondaryContainer = SleekBlueLight,
+    onSecondaryContainer = SleekBlueText,
+    tertiary = SleekGreyText,
     onTertiary = SleekSurface,
-    tertiaryContainer = SleekAmberSoft,
-    onTertiaryContainer = SleekAmberText,
+    tertiaryContainer = SleekGreySoft,
+    onTertiaryContainer = SleekGreyText,
     background = SleekBackground,
     surface = SleekSurface,
     surfaceVariant = SleekSurfaceVariant,

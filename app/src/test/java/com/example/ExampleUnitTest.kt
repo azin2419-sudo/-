@@ -55,4 +55,25 @@ class ExampleUnitTest {
     val target = profile.calculateTargetCalories()
     assertEquals(tdee - 400, target)
   }
+
+  @Test
+  fun testRomanticQuotesContainSweetPhrases() {
+    val quotes = com.example.data.quotes.QuoteProvider.initialQuotes
+    assertTrue(quotes.isNotEmpty())
+    val hasLoveQuote = quotes.any { it.text.contains("دوستت دارم") }
+    val hasBeautyQuote = quotes.any { it.text.contains("خوشگل") }
+    assertTrue(hasLoveQuote)
+    assertTrue(hasBeautyQuote)
+  }
+
+  @Test
+  fun testOnlineMusicLegendsAvailable() {
+    val tracks = com.example.data.music.OnlineMusicProvider.curatedTracks
+    assertTrue(tracks.isNotEmpty())
+    val artists = tracks.map { it.artist }
+    assertTrue(artists.contains("هایده"))
+    assertTrue(artists.contains("سیاوش قمیشی"))
+    assertTrue(artists.contains("مهستی"))
+    assertTrue(artists.contains("گوگوش"))
+  }
 }

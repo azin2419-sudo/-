@@ -12,8 +12,15 @@ data class OnlineMusicTrack(
 )
 
 enum class MusicCategory(val titleFa: String, val emoji: String) {
+    ALL("همه آهنگ‌ها", "🎵"),
+    PERSIAN_LEGENDS("اسطوره‌های خاطره‌انگیز", "📻"),
+    HAYEDEH("بانو هایده", "👑"),
+    GHOMAYSHI("سیاوش قمیشی", "🌧️"),
+    MAHASTI("بانو مهستی", "🌸"),
+    GOOGOOSH("گوگوش", "✨"),
     ROMANTIC("عاشقانه و دلنشین", "💖"),
     CALM_PMS("آرامش‌بخش دوران PMS", "🌿"),
     PIANO_CHILL("پیانو و خواب آرام", "🌙"),
     GUITAR_ACOUSTIC("گیتار ملایم", "🎸")
 }
+

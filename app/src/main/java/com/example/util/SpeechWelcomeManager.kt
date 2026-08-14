@@ -30,7 +30,7 @@ class SpeechWelcomeManager(private val context: Context) : TextToSpeech.OnInitLi
             val result = tts?.setLanguage(Locale.US)
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                 Log.w("SpeechWelcomeManager", "US English not supported, falling back to default")
-                tts?.setLanguage(Locale.getDefault())
+                tts?.setLanguage(Locale.ENGLISH)
             }
             tts?.setSpeechRate(0.95f)
             tts?.setPitch(1.05f)
@@ -47,11 +47,11 @@ class SpeechWelcomeManager(private val context: Context) : TextToSpeech.OnInitLi
     }
 
     /**
-     * Speaks the English welcome message loudly as requested by the user:
-     * "Fereshteh, welcome to your own application!"
+     * Speaks the English welcome message:
+     * "Hello my beautiful Fereshteh, welcome to your own application!"
      */
     fun speakWelcomeGreeting(partnerName: String = "Fereshteh") {
-        val message = "Fereshteh, welcome to your own application!"
+        val message = "Hello my beautiful Fereshteh, welcome to your own application!"
         speakLoudly(message)
     }
 

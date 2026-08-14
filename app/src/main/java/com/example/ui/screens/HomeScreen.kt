@@ -238,10 +238,10 @@ fun HomeScreen(
                             color = SleekTextPrimary
                         )
                         Text(
-                            text = "“Fereshteh, welcome to your own application!”",
+                            text = "“Hello my beautiful Fereshteh, welcome to your own application! ✨”",
                             style = MaterialTheme.typography.bodySmall,
                             color = SleekPinkPrimary,
-                            fontWeight = FontWeight.Medium
+                            fontWeight = FontWeight.Bold
                         )
                     }
                 }

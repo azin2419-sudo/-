@@ -149,7 +149,7 @@ fun OnlineMusicScreen(
                     Box(contentAlignment = Alignment.Center) {
                         Icon(
                             imageVector = Icons.Default.VolumeUp,
-                            contentDescription = "پخش صدای خوش‌آمد انگلیسی",
+                            contentDescription = "پخش صدای خوش‌آمد: فرشته خوشگلم به اپلیکیشن خودت خوش اومدی",
                             tint = Color.White,
                             modifier = Modifier.size(26.dp)
                         )
@@ -306,7 +306,7 @@ fun OnlineMusicScreen(
                     )
                 )
             }
-            items(MusicCategory.entries) { cat ->
+            items(MusicCategory.entries.filter { it != MusicCategory.ALL }) { cat ->
                 FilterChip(
                     selected = selectedCategory == cat,
                     onClick = { selectedCategory = if (selectedCategory == cat) null else cat },
