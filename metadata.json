@@ -1,0 +1,6 @@
+{
+  "name": "LoveCare",
+  "description": "Daily romantic caring notifications and period & PMS cycle tracker for your loved one with gentle comfort mode.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">LoveCare</string>
+    <string name="notification_channel_name">یادآورهای عاشقانه و مراقبت</string>
+    <string name="notification_channel_desc">ارسال اعلان‌های روزانه محبت‌آمیز و آگاهی از چرخه و PMS</string>
+    <string name="gentle_notification_channel_name">پیام‌های آرامش‌بخش و لطیف</string>
+    <string name="gentle_notification_channel_desc">اعلان‌های بی صدا و آرامش‌بخش در روزهای حساس</string>
+</resources>
