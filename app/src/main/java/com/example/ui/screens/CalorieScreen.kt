@@ -300,25 +300,77 @@ fun CalorieCalculatorSection(
 
                 Spacer(modifier = Modifier.height(10.dp))
 
+                // Target Highlights: Calories & Protein side-by-side
                 Row(
-                    verticalAlignment = Alignment.Bottom,
-                    horizontalArrangement = Arrangement.Center
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    Text(
-                        text = "$targetCalories",
-                        style = MaterialTheme.typography.displayMedium,
-                        fontWeight = FontWeight.Black,
-                        color = SleekPinkPrimary
-                    )
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text(
-                        text = "کیلوکالری / روز",
-                        style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.Bold,
-                        color = SleekTextPrimary,
-                        modifier = Modifier.padding(bottom = 6.dp)
-                    )
+                    // Calorie Target
+                    Surface(
+                        shape = RoundedCornerShape(20.dp),
+                        color = SleekPinkLight,
+                        border = BorderStroke(1.dp, SleekPinkPrimary),
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(14.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "کالری هدف 🎯",
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = SleekPinkPrimary
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "$targetCalories",
+                                style = MaterialTheme.typography.headlineMedium,
+                                fontWeight = FontWeight.Black,
+                                color = SleekPinkPrimary
+                            )
+                            Text(
+                                text = "kcal / روز",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = SleekTextSecondary
+                            )
+                        }
+                    }
+
+                    // Protein Target
+                    Surface(
+                        shape = RoundedCornerShape(20.dp),
+                        color = Color(0xFFFFF1F2),
+                        border = BorderStroke(1.dp, Color(0xFFE11D48)),
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(14.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "پروتئین هدف 🥩",
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFFE11D48)
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "${macros.proteinGrams}g",
+                                style = MaterialTheme.typography.headlineMedium,
+                                fontWeight = FontWeight.Black,
+                                color = Color(0xFFE11D48)
+                            )
+                            Text(
+                                text = "گرم / روز",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = SleekTextSecondary
+                            )
+                        }
+                    }
                 }
+
+                Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
                     text = "بر اساس هدف: ${selectedGoal.titleFa} • متابولیسم پایه (BMR): $bmr kcal",
@@ -327,7 +379,7 @@ fun CalorieCalculatorSection(
                     textAlign = TextAlign.Center
                 )
 
-                Spacer(modifier = Modifier.height(14.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
                 // Macro breakdown chips
                 Row(
@@ -606,9 +658,13 @@ fun DailyCalorieLogSection(
     var selectedMealFilter by remember { mutableStateOf<MealType?>(null) }
 
     val targetCalories = profile.calculateTargetCalories()
+    val targetMacros = profile.calculateMacros()
     val consumedCalories = foodLogs.sumOf { it.calories }
+    val consumedProtein = foodLogs.sumOf { it.proteinGrams }
     val remainingCalories = (targetCalories - consumedCalories).coerceAtLeast(0)
+    val remainingProtein = (targetMacros.proteinGrams - consumedProtein).coerceAtLeast(0)
     val progressPercent = (consumedCalories.toFloat() / targetCalories.toFloat()).coerceIn(0f, 1f)
+    val proteinProgressPercent = if (targetMacros.proteinGrams > 0) (consumedProtein.toFloat() / targetMacros.proteinGrams.toFloat()).coerceIn(0f, 1f) else 0f
 
     val filteredLogs = if (selectedMealFilter == null) {
         foodLogs
@@ -622,7 +678,7 @@ fun DailyCalorieLogSection(
             .padding(horizontal = 16.dp, vertical = 10.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        // Daily Calorie Summary Progress Card
+        // Daily Calorie & Protein Summary Progress Card
         Card(
             modifier = Modifier.fillMaxWidth().testTag("calorie_progress_card"),
             shape = RoundedCornerShape(28.dp),
@@ -633,8 +689,10 @@ fun DailyCalorieLogSection(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(18.dp)
+                    .padding(18.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
+                // Calorie Row
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -642,7 +700,7 @@ fun DailyCalorieLogSection(
                 ) {
                     Column {
                         Text(
-                            text = "گزارش کالری امروز 📊",
+                            text = "گزارش کالری امروز 🔥",
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold,
                             color = SleekTextPrimary
@@ -659,7 +717,7 @@ fun DailyCalorieLogSection(
                         color = if (consumedCalories <= targetCalories) SleekPinkLight else Color(0xFFFEE2E2)
                     ) {
                         Text(
-                            text = if (consumedCalories <= targetCalories) "باقیمانده: $remainingCalories" else "مازاد: ${consumedCalories - targetCalories}",
+                            text = if (consumedCalories <= targetCalories) "باقیمانده: $remainingCalories kcal" else "مازاد: ${consumedCalories - targetCalories} kcal",
                             style = MaterialTheme.typography.labelSmall,
                             fontWeight = FontWeight.Bold,
                             color = if (consumedCalories <= targetCalories) SleekPinkPrimary else Color(0xFFDC2626),
@@ -668,19 +726,61 @@ fun DailyCalorieLogSection(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(12.dp))
-
                 LinearProgressIndicator(
                     progress = { progressPercent },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(10.dp)
+                        .height(8.dp)
                         .clip(CircleShape),
                     color = if (consumedCalories <= targetCalories) SleekPinkPrimary else Color(0xFFDC2626),
                     trackColor = SleekBorderLight
                 )
 
-                Spacer(modifier = Modifier.height(10.dp))
+                // Protein Row (Equal Prominence)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column {
+                        Text(
+                            text = "گزارش پروتئین مصرفی 🥩",
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFFE11D48)
+                        )
+                        Text(
+                            text = "مصرف‌شده: $consumedProtein از ${targetMacros.proteinGrams} گرم",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = SleekTextSecondary
+                        )
+                    }
+
+                    Surface(
+                        shape = RoundedCornerShape(12.dp),
+                        color = Color(0xFFFFF1F2)
+                    ) {
+                        Text(
+                            text = if (consumedProtein >= targetMacros.proteinGrams) "هدف تکمیل شد! 👏" else "باقیمانده: $remainingProtein گرم",
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFFE11D48),
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                        )
+                    }
+                }
+
+                LinearProgressIndicator(
+                    progress = { proteinProgressPercent },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(8.dp)
+                        .clip(CircleShape),
+                    color = Color(0xFFE11D48),
+                    trackColor = SleekBorderLight
+                )
+
+                Spacer(modifier = Modifier.height(2.dp))
 
                 // Breakdown per meal
                 Row(
@@ -689,13 +789,21 @@ fun DailyCalorieLogSection(
                 ) {
                     MealType.entries.forEach { meal ->
                         val mealCal = foodLogs.filter { it.mealType == meal }.sumOf { it.calories }
+                        val mealProt = foodLogs.filter { it.mealType == meal }.sumOf { it.proteinGrams }
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(text = meal.emoji, fontSize = 16.sp)
                             Text(
-                                text = "${meal.titleFa}: $mealCal",
+                                text = "${meal.titleFa}: $mealCal kcal",
                                 style = MaterialTheme.typography.labelSmall,
                                 color = SleekTextSecondary,
                                 fontSize = 10.sp
+                            )
+                            Text(
+                                text = "🥩 ${mealProt}g",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = Color(0xFFE11D48),
+                                fontSize = 9.sp,
+                                fontWeight = FontWeight.Bold
                             )
                         }
                     }
@@ -856,6 +964,21 @@ fun DailyCalorieLogSection(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(6.dp)
                             ) {
+                                // Protein Badge
+                                Surface(
+                                    shape = RoundedCornerShape(8.dp),
+                                    color = Color(0xFFFFF1F2),
+                                    border = BorderStroke(1.dp, Color(0xFFFECDD3))
+                                ) {
+                                    Text(
+                                        text = "🥩 ${item.proteinGrams}g",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color(0xFFE11D48),
+                                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                    )
+                                }
+
                                 Text(
                                     text = "${item.calories} kcal",
                                     style = MaterialTheme.typography.labelLarge,
@@ -1158,7 +1281,7 @@ fun AiFoodScannerSection(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Column {
+                        Column(modifier = Modifier.weight(1f)) {
                             Text(
                                 text = analysisResult.foodName,
                                 style = MaterialTheme.typography.titleMedium,
@@ -1166,23 +1289,40 @@ fun AiFoodScannerSection(
                                 color = SleekTextPrimary
                             )
                             Text(
-                                text = "دقت تحلیل: ${analysisResult.confidenceScore}",
+                                text = "دقت تحلیل هوش مصنوعی: ${analysisResult.confidenceScore}",
                                 style = MaterialTheme.typography.labelSmall,
                                 color = SleekTextMuted
                             )
                         }
 
-                        Surface(
-                            shape = RoundedCornerShape(14.dp),
-                            color = SleekPinkPrimary
-                        ) {
-                            Text(
-                                text = "${analysisResult.estimatedCalories} kcal",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White,
-                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
-                            )
+                        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                            // Protein Badge
+                            Surface(
+                                shape = RoundedCornerShape(14.dp),
+                                color = Color(0xFFE11D48)
+                            ) {
+                                Text(
+                                    text = "🥩 ${analysisResult.proteinGrams}g پروتئین",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White,
+                                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
+                                )
+                            }
+
+                            // Calories Badge
+                            Surface(
+                                shape = RoundedCornerShape(14.dp),
+                                color = SleekPinkPrimary
+                            ) {
+                                Text(
+                                    text = "🔥 ${analysisResult.estimatedCalories} kcal",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White,
+                                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
+                                )
+                            }
                         }
                     }
 

@@ -61,6 +61,7 @@ fun HomeScreen(
     viewModel: LoveCareViewModel,
     onOpenCycleDialog: () -> Unit,
     onNavigateToCalorie: () -> Unit = {},
+    onNavigateToSurpriseEgg: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -266,14 +267,71 @@ fun HomeScreen(
             }
         }
 
-        // 1. Today's Romantic Quote Card (Google/Curated in order)
-        TodayQuoteCard(
-            quote = state.todayQuote,
-            partnerName = state.profile.name,
-            onNextQuoteClick = { viewModel.advanceQuote() },
-            onSendNotificationNow = { viewModel.sendImmediateTestNotification() },
-            onToggleFavorite = { viewModel.toggleFavoriteQuote(state.todayQuote.id) }
-        )
+        // 1. Surprise Egg Date Teaser Card (پوریا & فرشته)
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("home_surprise_egg_card"),
+            shape = RoundedCornerShape(26.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White),
+            border = BorderStroke(1.5.dp, Color(0xFFFDE047)),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Surface(
+                        shape = CircleShape,
+                        color = Color(0xFFFEF9C3),
+                        modifier = Modifier.size(46.dp)
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Text(text = "🥚", fontSize = 24.sp)
+                        }
+                    }
+
+                    Column {
+                        Text(
+                            text = "تخم‌مرغ شانسی قرار بعدی 🎁",
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = SleekTextPrimary
+                        )
+                        Text(
+                            text = "قرار بعدی کی و کجا؟ بین ${state.profile.senderName} و ${state.profile.name}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = SleekTextSecondary
+                        )
+                    }
+                }
+
+                Surface(
+                    shape = RoundedCornerShape(14.dp),
+                    color = SleekPinkPrimary
+                ) {
+                    androidx.compose.material3.TextButton(
+                        onClick = onNavigateToSurpriseEgg,
+                        contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 12.dp, vertical = 6.dp)
+                    ) {
+                        Text(
+                            text = "شکستن 🔨",
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                    }
+                }
+            }
+        }
 
         // 2. Cycle & PMS Status Card (Prominently shows PMS phase, days left / passed)
         CycleStatusCard(

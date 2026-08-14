@@ -28,21 +28,25 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.Celebration
 import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FormatQuote
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.NotificationsActive
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Spa
 import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material.icons.outlined.CalendarMonth
+import androidx.compose.material.icons.outlined.Celebration
 import androidx.compose.material.icons.outlined.Chat
 import androidx.compose.material.icons.outlined.FavoriteBorder
-import androidx.compose.material.icons.outlined.FormatQuote
 import androidx.compose.material.icons.outlined.MusicNote
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Restaurant
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -82,13 +86,14 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.data.model.CyclePhase
+import com.example.ui.components.CompleteProfileDialog
 import com.example.ui.components.CycleSettingsDialog
 import com.example.ui.screens.CalorieScreen
 import com.example.ui.screens.CycleTrackerScreen
 import com.example.ui.screens.HomeScreen
 import com.example.ui.screens.OnlineMusicScreen
-import com.example.ui.screens.QuotesLibraryScreen
 import com.example.ui.screens.SettingsScreen
+import com.example.ui.screens.SurpriseEggScreen
 import com.example.ui.screens.TwoPersonChatScreen
 import com.example.ui.theme.MyApplicationTheme
 import com.example.ui.theme.PeriodAccent
@@ -103,11 +108,11 @@ enum class MainTab(
     val testTag: String
 ) {
     HOME("امروز", Icons.Filled.Favorite, Icons.Outlined.FavoriteBorder, "tab_home"),
-    CALORIE("کالری من", Icons.Filled.Restaurant, Icons.Outlined.Restaurant, "tab_calorie"),
+    SURPRISE_EGG("تخم‌مرغ شانسی", Icons.Filled.Celebration, Icons.Outlined.Celebration, "tab_surprise_egg"),
+    CALORIE("کالری و پروتئین", Icons.Filled.Restaurant, Icons.Outlined.Restaurant, "tab_calorie"),
     CHAT("چت دونفره", Icons.Filled.Chat, Icons.Outlined.Chat, "tab_chat"),
     MUSIC("موزیک", Icons.Filled.MusicNote, Icons.Outlined.MusicNote, "tab_music"),
     CYCLE("چرخه/PMS", Icons.Filled.CalendarMonth, Icons.Outlined.CalendarMonth, "tab_cycle"),
-    QUOTES("جملات", Icons.Filled.FormatQuote, Icons.Outlined.FormatQuote, "tab_quotes"),
     SETTINGS("تنظیمات", Icons.Filled.Settings, Icons.Outlined.Settings, "tab_settings")
 }
 
@@ -132,7 +137,15 @@ fun LoveCareApp(viewModel: LoveCareViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var selectedTab by remember { mutableStateOf(MainTab.HOME) }
     var showCycleDialog by remember { mutableStateOf(false) }
+    var showCompleteProfileDialog by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
+
+    // First time launch: Prompt for complete profile input if not completed
+    LaunchedEffect(uiState.profile.isProfileCompleted) {
+        if (!uiState.profile.isProfileCompleted) {
+            showCompleteProfileDialog = true
+        }
+    }
 
     // Request notification permission on Android 13+
     val permissionLauncher = rememberLauncherForActivityResult(
@@ -202,6 +215,18 @@ fun LoveCareApp(viewModel: LoveCareViewModel = viewModel()) {
                                 )
                             }
                         }
+                    }
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick = { showCompleteProfileDialog = true },
+                        modifier = Modifier.testTag("top_bar_profile_btn")
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Person,
+                            contentDescription = "ویرایش مشخصات کامل",
+                            tint = com.example.ui.theme.SleekPinkPrimary
+                        )
                     }
                 },
                 actions = {
@@ -284,7 +309,16 @@ fun LoveCareApp(viewModel: LoveCareViewModel = viewModel()) {
                             state = uiState,
                             viewModel = viewModel,
                             onOpenCycleDialog = { showCycleDialog = true },
-                            onNavigateToCalorie = { selectedTab = MainTab.CALORIE }
+                            onNavigateToCalorie = { selectedTab = MainTab.CALORIE },
+                            onNavigateToSurpriseEgg = { selectedTab = MainTab.SURPRISE_EGG }
+                        )
+                    }
+                    MainTab.SURPRISE_EGG -> {
+                        SurpriseEggScreen(
+                            partnerName = uiState.profile.name,
+                            senderName = uiState.profile.senderName,
+                            onSendDateToChat = { viewModel.sendSurpriseDateToChat(it) },
+                            onOpenChat = { selectedTab = MainTab.CHAT }
                         )
                     }
                     MainTab.CALORIE -> {
@@ -327,18 +361,6 @@ fun LoveCareApp(viewModel: LoveCareViewModel = viewModel()) {
                             partnerName = uiState.profile.name
                         )
                     }
-                    MainTab.QUOTES -> {
-                        QuotesLibraryScreen(
-                            quotes = uiState.quotesList,
-                            currentQuoteId = uiState.todayQuote.id,
-                            selectedCategory = uiState.profile.selectedCategory,
-                            onCategorySelected = { viewModel.setQuoteCategory(it) },
-                            onSelectQuoteAsActive = { viewModel.selectSpecificQuote(it) },
-                            onToggleFavorite = { viewModel.toggleFavoriteQuote(it) },
-                            onDeleteQuote = { viewModel.deleteQuote(it) },
-                            onAddQuote = { text, author, cat -> viewModel.addCustomQuote(text, author, cat) }
-                        )
-                    }
                     MainTab.CYCLE -> {
                         CycleTrackerScreen(
                             cycleInfo = uiState.cycleInfo,
@@ -368,6 +390,18 @@ fun LoveCareApp(viewModel: LoveCareViewModel = viewModel()) {
                 onSave = { lastPeriod, length, duration ->
                     viewModel.updateCycleSettings(lastPeriod, length, duration)
                     showCycleDialog = false
+                }
+            )
+        }
+
+        if (showCompleteProfileDialog) {
+            CompleteProfileDialog(
+                partnerProfile = uiState.profile,
+                calorieProfile = uiState.calorieProfile,
+                onDismiss = { showCompleteProfileDialog = false },
+                onSave = { updatedProfile, updatedCalProfile ->
+                    viewModel.saveCompleteProfile(updatedProfile, updatedCalProfile)
+                    showCompleteProfileDialog = false
                 }
             )
         }

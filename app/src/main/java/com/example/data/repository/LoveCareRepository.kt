@@ -224,8 +224,9 @@ class LoveCareRepository(private val context: Context) {
     }
 
     private fun loadProfile(): PartnerProfile {
-        val name = prefs.getString("partner_name", "جان دلم") ?: "جان دلم"
-        val nickname = prefs.getString("partner_nickname", "فرشته من") ?: "فرشته من"
+        val name = prefs.getString("partner_name", "فرشته") ?: "فرشته"
+        val nickname = prefs.getString("partner_nickname", "فرشته خوشگلم") ?: "فرشته خوشگلم"
+        val senderName = prefs.getString("sender_name", "پوریا") ?: "پوریا"
         val lastPeriod = prefs.getLong("last_period_millis", System.currentTimeMillis() - (18L * 24 * 60 * 60 * 1000))
         val cycleLength = prefs.getInt("cycle_length", 28)
         val periodDuration = prefs.getInt("period_duration", 5)
@@ -238,10 +239,12 @@ class LoveCareRepository(private val context: Context) {
         val includePms = prefs.getBoolean("include_pms_notif", true)
         val categoryStr = prefs.getString("quote_category", QuoteCategory.ALL.name) ?: QuoteCategory.ALL.name
         val category = try { QuoteCategory.valueOf(categoryStr) } catch (_: Exception) { QuoteCategory.ALL }
+        val isCompleted = prefs.getBoolean("profile_is_completed", false)
 
         return PartnerProfile(
             name = name,
             nickname = nickname,
+            senderName = senderName,
             lastPeriodStartDateMillis = lastPeriod,
             cycleLengthDays = cycleLength,
             periodDurationDays = periodDuration,
@@ -252,7 +255,8 @@ class LoveCareRepository(private val context: Context) {
             isManualBadMoodToday = badMoodToday,
             currentQuoteIndex = quoteIndex,
             includePmsInNotification = includePms,
-            selectedCategory = category
+            selectedCategory = category,
+            isProfileCompleted = isCompleted
         )
     }
 
@@ -260,6 +264,7 @@ class LoveCareRepository(private val context: Context) {
         prefs.edit()
             .putString("partner_name", prof.name)
             .putString("partner_nickname", prof.nickname)
+            .putString("sender_name", prof.senderName)
             .putLong("last_period_millis", prof.lastPeriodStartDateMillis)
             .putInt("cycle_length", prof.cycleLengthDays)
             .putInt("period_duration", prof.periodDurationDays)
@@ -271,6 +276,7 @@ class LoveCareRepository(private val context: Context) {
             .putInt("quote_index", prof.currentQuoteIndex)
             .putBoolean("include_pms_notif", prof.includePmsInNotification)
             .putString("quote_category", prof.selectedCategory.name)
+            .putBoolean("profile_is_completed", prof.isProfileCompleted)
             .apply()
     }
 

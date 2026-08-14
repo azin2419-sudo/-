@@ -127,6 +127,31 @@ class LoveCareViewModel(application: Application) : AndroidViewModel(application
         repository.updateProfile(current.copy(name = name.trim(), nickname = nickname.trim()))
     }
 
+    fun updateSenderName(senderName: String) {
+        val current = repository.profile.value
+        repository.updateProfile(current.copy(senderName = senderName.trim()))
+    }
+
+    fun saveCompleteProfile(partnerProfile: PartnerProfile, calorieProfile: com.example.data.model.CalorieProfile) {
+        repository.updateProfile(partnerProfile.copy(isProfileCompleted = true))
+        repository.updateCalorieProfile(calorieProfile)
+        AlarmScheduler.scheduleDailyAlarm(
+            getApplication(),
+            partnerProfile.notificationHour,
+            partnerProfile.notificationMinute
+        )
+        _toastMessage.value = "مشخصات کامل با موفقیت ذخیره شد ✨"
+    }
+
+    fun sendSurpriseDateToChat(proposalMessage: String) {
+        repository.sendChatMessage(
+            sender = com.example.data.model.MessageSender.ME,
+            text = proposalMessage,
+            isSpecialLoveNote = true
+        )
+        _toastMessage.value = "قرار عاشقانه به چت دونفره ارسال شد 💌"
+    }
+
     fun updateCycleSettings(lastPeriodMillis: Long, cycleLength: Int, periodDuration: Int) {
         val current = repository.profile.value
         repository.updateProfile(
